@@ -1,0 +1,6 @@
+[module]
+pkgpath = "gno.land/p/low88/zk"
+version = "0.1.0"
+
+[require]
+std = "v1.2.0"
