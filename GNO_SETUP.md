@@ -139,22 +139,15 @@ func VerifyProof(proof *zk.Proof, statement *zk.Statement) bool {
 | State Management | N/A | ✅ Realm packages |
 | Gas Costs | N/A | ⚠️ Consider gas |
 
-## Integration with Your Projects
+## Integration with Projects
 
-Given your work with:
+ work with:
 - **Zcash**: Use this for verifying zk-SNARK proofs on Gno.land
 - **Nozy Wallet**: Bridge Zcash privacy to Gno.land
 - **Leonine DAO**: Implement privacy-preserving smart contracts
-
-## Next Steps
-
-1. Test locally with `gnodev`
-2. Deploy to devnet
-3. Integrate with your Zcash/ZK projects
-4. Build privacy-preserving smart contracts
 
 ## Resources
 
 - [Gno.land Docs](https://docs.gno.land)
 - [Gno.land GitHub](https://github.com/gnolang/gno)
-- Your GitHub: [@Lowo88](https://github.com/Lowo88)
+  
