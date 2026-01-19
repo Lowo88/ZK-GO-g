@@ -111,7 +111,7 @@ gnokey maketx addpkg \
 
 ## Integration with Zcash/Privacy Tech
 
-Given your work with Zcash and privacy tech, this package can be used to:
+Privacy tech, this package can be used to:
 - Verify zk-SNARK proofs on Gno.land
 - Implement privacy-preserving smart contracts
 - Bridge Zcash privacy features to Gno.land ecosystem
