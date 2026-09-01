@@ -1,0 +1,24 @@
+{
+  "format": "zk-go-g-zec-claim-fixture-v1",
+  "spec": "SPEC_ZEC_CLAIM_V1.md",
+  "realm_pkgpath": "gno.land/r/low88/zec_claim",
+  "pure_pkgpath": "gno.land/p/low88/zk",
+  "description": "Two-leaf Merkle tree. Leaves are raw claim bytes for RegisterClaim (not pre-hashed claim leaves).",
+  "leaves_hex": [
+    "636c61696d2d61",
+    "636c61696d2d62"
+  ],
+  "claims_root_hex": "c8662dde0b310d392ed71ab97f1028c0f95d8789dbabd07fc4cbe42cfa1bcb5f",
+  "register_claim_index_0": {
+    "leaf_hex": "636c61696d2d61",
+    "proof": {
+      "leaf_hex": "636c61696d2d61",
+      "path_hex": [
+        "a0a242d950990759b098773505a8f07a5d2d72a1fbcbd781e0ab484e4610ccda"
+      ],
+      "indices": [0],
+      "root_hex": "c8662dde0b310d392ed71ab97f1028c0f95d8789dbabd07fc4cbe42cfa1bcb5f"
+    }
+  },
+  "honest_claim": "Gno verifies Merkle membership of a Nozy-exported claim leaf; not Orchard proof_instance."
+}

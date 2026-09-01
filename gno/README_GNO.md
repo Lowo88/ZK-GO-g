@@ -109,13 +109,15 @@ gnokey maketx addpkg \
 - **Gas Costs**: ZK verification can be expensive. Optimize for gas efficiency.
 - **Storage**: Consider storage costs when storing proofs on-chain
 
-## Integration with Zcash/Privacy Tech
+## Integration with Nozy / Zcash (v1)
 
-Privacy tech, this package can be used to:
-- Verify zk-SNARK proofs on Gno.land
-- Implement privacy-preserving smart contracts
-- Bridge Zcash privacy features to Gno.land ecosystem
-- Create shielded transaction verification
+v1 **ZEC claim registry** (Merkle membership only):
+
+- Spec: [`SPEC_ZEC_CLAIM_V1.md`](../../SPEC_ZEC_CLAIM_V1.md)
+- Realm: `realms/r/low88/zec_claim/`
+- **Not** Orchard/Halo2 SNARK verify — see [`PHASE2_GATE.md`](../../PHASE2_GATE.md)
+
+The toy `VerifyProof` hash challenge is educational only.
 
 ## Testing Locally
 

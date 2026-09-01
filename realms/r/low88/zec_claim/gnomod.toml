@@ -1,0 +1,7 @@
+[module]
+pkgpath = "gno.land/r/low88/zec_claim"
+version = "0.1.0"
+
+[require]
+std = "v1.2.0"
+gno.land/p/low88/zk = "v0.1.0"

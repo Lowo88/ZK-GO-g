@@ -1,13 +1,15 @@
-# ZK-Go: Zero Knowledge Proofs in Go
+# ZK-Go: Zero Knowledge Primitives for Go and Gno.land
 
-A Go package implementing fundamental zero-knowledge proof primitives and cryptographic building blocks for both standard Go and Gno.land blockchain.
+Off-chain Go (`zk/`) and on-chain Gno (`gno/`, `realms/`) for ZK-style primitives and the **Nozy × Gno ZEC claim registry (v1)**.
+
+**Honest v1 scope:** Merkle membership registry for Nozy-exported claim leaves — **not** Orchard/Halo2 SNARK verify. See [`SPEC_ZEC_CLAIM_V1.md`](SPEC_ZEC_CLAIM_V1.md).
 
 ## Features
 
-- **Zero-Knowledge Proofs**: Basic proof generation and verification
-- **Commitment Schemes**: Pedersen-style commitments for hiding values
-- **Merkle Trees**: Efficient membership proofs using Merkle trees
-- **Gno.land Support**: Blockchain-compatible package for on-chain verification
+- **Merkle trees** — off-chain build + on-chain `VerifyMerkleProof` (aligned algorithms)
+- **Toy hash proofs** — educational only (`zk/proof.go`); not Zcash-grade
+- **ZEC claim realm** — `gno.land/r/low88/zec_claim` (`realms/r/low88/zec_claim/`)
+- **Nozy glue** — claim leaf spec + fixture for `nozy zk-gno` track (NozyWallet repo)
 
 ## Installation
 
@@ -15,9 +17,32 @@ A Go package implementing fundamental zero-knowledge proof primitives and crypto
 go get github.com/Lowo88/ZK-GO-g
 ```
 
-## Quick Start
+## Quick start
 
-See the repository for complete examples and documentation.
+```bash
+go test ./zk/...
+go run examples/zec_claim_fixture.go
+```
+
+Gno local test (requires `gnodev`):
+
+```bash
+gnodev test ./gno
+```
+
+## Key paths
+
+| Path | Role |
+|------|------|
+| `SPEC_ZEC_CLAIM_V1.md` | Frozen v1 claim leaf + realm API |
+| `gno/` | Pure package `gno.land/p/low88/zk` |
+| `realms/r/low88/zec_claim/` | Claim registry realm |
+| `fixtures/zec_claim_v1.json` | Integration fixture |
+| `PHASE2_GATE.md` | SNARK verify — do not start until API frozen |
+
+## NozyWallet
+
+Nozy exports Ironwood notes → claim draft; this repo verifies Merkle membership on Gno. Parallel track: zk-CosmWasm in [NozyWallet](https://github.com/LEONINE-DAO/Nozy-wallet).
 
 ## License
 

@@ -2,73 +2,42 @@
 
 ## Overview
 
-This package provides both:
-1. **Standard Go package** (`zk/`) - For off-chain proof generation
-2. **Gno.land package** (`gno/`) - For on-chain proof verification
+1. **Standard Go** (`zk/`) — off-chain Merkle trees, toy proofs, claim fixture helper
+2. **Gno pure package** (`gno/`) — on-chain verify (`gno.land/p/low88/zk`)
+3. **ZEC claim realm** (`realms/r/low88/zec_claim/`) — Merkle registry (`gno.land/r/low88/zec_claim`)
 
-## Package Structure
+v1 verifies **Merkle membership** of Nozy-exported claim leaves. It does **not** verify Orchard/Halo2 or shielded ZEC proofs. See [`SPEC_ZEC_CLAIM_V1.md`](SPEC_ZEC_CLAIM_V1.md).
+
+## Package structure
 
 ```
-zk-go/
-├── zk/              # Standard Go package (off-chain)
-│   ├── proof.go
-│   ├── commitment.go
-│   ├── merkle.go
-│   └── zk_test.go
-├── gno/              # Gno.land package (on-chain)
-│   ├── verifier.gno
-│   ├── commitment.gno
-│   ├── merkle.gno
-│   └── example_realm.gno
-├── go.mod            # Go module
-├── gnomod.toml       # Gno module config
-└── README_GNO.md     # Gno.land documentation
+ZK-GO-g/
+├── SPEC_ZEC_CLAIM_V1.md
+├── zk/                    # Go off-chain
+├── gno/                   # Pure package (p/low88/zk)
+├── realms/r/low88/zec_claim/  # Claim registry realm
+├── fixtures/
+├── examples/
+└── gnomod.toml            # pure package root
 ```
 
-## Installation
-
-### 1. Install Gno.land Tools
+## Install Gno tools
 
 ```bash
-# Install gnodev (development tool)
 go install github.com/gnolang/gno/gnodev@latest
-
-# Install gnokey (key management)
 go install github.com/gnolang/gno/gnokey@latest
 ```
 
-### 2. Set Up Your Account
+## Local testing
 
 ```bash
-# Create a new key
-gnokey add mykey
+go test ./zk/...
+go run examples/zec_claim_fixture.go
 
-# Get your address
-gnokey list
-```
-
-### 3. Update Package Path
-
-Edit `gnomod.toml` and update the `pkgpath` with your Gno.land username:
-
-```toml
-[module]
-pkgpath = "gno.land/p/YOUR_USERNAME/zk"
-```
-
-## Development Workflow
-
-### Local Testing
-
-```bash
-# Test the Gno package locally
 gnodev test ./gno
-
-# Run the example realm
-gnodev run ./gno/example_realm.gno
 ```
 
-### Deploy to Devnet
+## Deploy pure package
 
 ```bash
 gnokey maketx addpkg \
@@ -80,74 +49,32 @@ gnokey maketx addpkg \
     --chainid "dev"
 ```
 
-### Deploy to Mainnet
+## Deploy ZEC claim realm
 
 ```bash
 gnokey maketx addpkg \
-    --pkgpath "gno.land/p/low88/zk" \
-    --pkgdir "./gno" \
+    --pkgpath "gno.land/r/low88/zec_claim" \
+    --pkgdir "./realms/r/low88/zec_claim" \
     --gas-fee "1000000ugnot" \
     --gas-wanted "2000000" \
     --broadcast \
-    --chainid "mainnet"
+    --chainid "dev"
 ```
 
-## Usage Pattern
+Operator workflow:
 
-### Off-Chain (Go) - Generate Proofs
+1. Build Merkle tree from allowed claim leaves (off-chain `zk.NewMerkleTree`)
+2. `SetClaimsRoot(root)` on realm
+3. Users `RegisterClaim(leaf, proof)` with proofs from Nozy / `examples/zec_claim_fixture.go`
 
-```go
-package main
+## Nozy integration
 
-import "github.com/Lowo88/ZK-GO-g/zk"
+- Nozy: `vote-export-notes` → `nozy zk-gno claim-draft` (NozyWallet repo)
+- Public Gno RPC: treat like remote submit (mixnet/local egress policy in Nozy)
 
-func main() {
-    // Generate proof off-chain
-    statement := &zk.Statement{
-        PublicValue: []byte("public statement"),
-    }
-    witness := &zk.Witness{
-        Secret: []byte("secret"),
-    }
-    
-    prover := zk.NewProver(statement, witness)
-    proof, _ := prover.GenerateProof()
-    
-    // Send proof to blockchain for verification
-    // (via transaction or call)
-}
-```
-
-### On-Chain (Gno) - Verify Proofs
-
-```gno
-import "gno.land/p/low88/zk"
-
-// In your realm package
-func VerifyProof(proof *zk.Proof, statement *zk.Statement) bool {
-    return zk.VerifyProof(proof, statement)
-}
-```
-
-## Key Differences
-
-| Feature | Go Package | Gno Package |
-|---------|-----------|-------------|
-| Random Generation | ✅ `crypto/rand` | ❌ Must be off-chain |
-| Proof Generation | ✅ Full support | ❌ Off-chain only |
-| Proof Verification | ✅ Supported | ✅ Supported |
-| State Management | N/A | ✅ Realm packages |
-| Gas Costs | N/A | ⚠️ Consider gas |
-
-## Integration with Projects
-
- work with:
-- **Zcash**: Use this for verifying zk-SNARK proofs on Gno.land
-- **Nozy Wallet**: Bridge Zcash privacy to Gno.land
-- **Leonine DAO**: Implement privacy-preserving smart contracts
+Do **not** claim “shielded ZEC verified on Gno” until [`PHASE2_GATE.md`](PHASE2_GATE.md) is satisfied.
 
 ## Resources
 
 - [Gno.land Docs](https://docs.gno.land)
-- [Gno.land GitHub](https://github.com/gnolang/gno)
-  
+- [Gno GitHub](https://github.com/gnolang/gno)

@@ -1,7 +1,8 @@
 package zk
 
 import (
-	"std"
+	"crypto/sha256"
+	"errors"
 )
 
 type MerkleTree struct {
@@ -19,7 +20,7 @@ type MerkleProof struct {
 
 func NewMerkleTree(leaves [][]byte) (*MerkleTree, error) {
 	if len(leaves) == 0 {
-		return nil, std.NewError("cannot create tree with no leaves")
+		return nil, errors.New("cannot create tree with no leaves")
 	}
 
 	depth := calculateDepth(len(leaves))
@@ -34,7 +35,7 @@ func NewMerkleTree(leaves [][]byte) (*MerkleTree, error) {
 
 func (mt *MerkleTree) GenerateProof(leafIndex int) (*MerkleProof, error) {
 	if leafIndex < 0 || leafIndex >= len(mt.Leaves) {
-		return nil, std.NewError("invalid leaf index")
+		return nil, errors.New("invalid leaf index")
 	}
 
 	path, indices := mt.getMerklePath(leafIndex)
@@ -48,7 +49,6 @@ func (mt *MerkleTree) GenerateProof(leafIndex int) (*MerkleProof, error) {
 }
 
 // VerifyMerkleProof checks membership. Starts from HashLeaf(raw leaf).
-// Empty Path is valid for a single-leaf tree.
 func VerifyMerkleProof(proof *MerkleProof) bool {
 	if proof == nil || len(proof.Leaf) == 0 || len(proof.Root) == 0 {
 		return false
@@ -118,11 +118,18 @@ func (mt *MerkleTree) getMerklePath(leafIndex int) ([][]byte, []int) {
 }
 
 func HashLeaf(leaf []byte) []byte {
-	return std.Hash(append([]byte{0x00}, leaf...))
+	h := sha256.New()
+	h.Write([]byte{0x00})
+	h.Write(leaf)
+	return h.Sum(nil)
 }
 
 func HashPair(left, right []byte) []byte {
-	return std.Hash(append(append([]byte{0x01}, left...), right...))
+	h := sha256.New()
+	h.Write([]byte{0x01})
+	h.Write(left)
+	h.Write(right)
+	return h.Sum(nil)
 }
 
 func calculateDepth(leafCount int) int {
@@ -132,16 +139,4 @@ func calculateDepth(leafCount int) int {
 		depth++
 	}
 	return depth
-}
-
-func verifyBytesEqual(a, b []byte) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
 }
